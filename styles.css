@@ -1,0 +1,694 @@
+:root {
+    --primary-color: #ff4081;
+    --secondary-color: #f8bbd0;
+    --background-color: #fff5f7;
+    --text-color: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 192, 203, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 192, 203, 0.1) 0%, transparent 20%);
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+body.dragover {
+    background-color: rgba(255, 192, 203, 0.2);
+}
+
+body.dragover::before {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: var(--primary-color);
+    background: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.logo {
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.logo h1 {
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+.nav-links {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-links li a:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.nav-links li a i {
+    margin-right: 10px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+}
+
+.welcome-message {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.welcome-message h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.welcome-message p {
+    color: #666;
+    font-size: 18px;
+}
+
+/* 笔记页面样式 */
+.notes-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.note-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.note-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.note-form button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.note-form button:hover {
+    background-color: #f50057;
+}
+
+.photo-upload {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.photo-upload input[type="file"] {
+    margin-bottom: 10px;
+}
+
+.notes-list {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.note-item {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.note-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 64, 129, 0.8);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.delete-btn:hover {
+    background-color: rgba(255, 64, 129, 1);
+    transform: scale(1.05);
+}
+
+.upload-area {
+    border: 2px dashed var(--primary-color);
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 192, 203, 0.1);
+}
+
+.upload-area:hover {
+    background-color: rgba(255, 192, 203, 0.2);
+}
+
+.upload-area.dragover {
+    background-color: rgba(255, 192, 203, 0.3);
+    border-color: #f50057;
+}
+
+.upload-text {
+    color: var(--primary-color);
+}
+
+.upload-text i {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.upload-text p {
+    margin: 0;
+    font-size: 16px;
+}
+
+#uploadStatus {
+    margin-top: 10px;
+    text-align: center;
+    min-height: 20px;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.note-input {
+    margin-top: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.note-input textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.note-input button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.note-input button:hover {
+    background-color: #f50057;
+}
+
+.note-content {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+}
+
+.note-text {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    line-height: 1.5;
+    padding: 5px;
+    outline: none;
+    transition: all 0.3s ease;
+    min-height: 20px;
+    cursor: text;
+}
+
+.note-text:empty:before {
+    content: attr(data-placeholder);
+    color: #999;
+}
+
+.note-text:focus {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.edit-area {
+    position: relative;
+    margin-top: 10px;
+}
+
+.edit-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.edit-buttons {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.save-btn, .cancel-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #45a049;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #da190b;
+}
+
+.save-btn i, .cancel-btn i {
+    font-size: 18px;
+}
+
+.upload-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.upload-button button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.upload-button button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.upload-button button i {
+    font-size: 24px;
+}
+
+.heart {
+    position: fixed;
+    pointer-events: none;
+    animation: float-up 3s ease-in-out forwards;
+    z-index: 1000;
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.password-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.password-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+.password-box h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.password-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.password-box input:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 5px rgba(255, 64, 129, 0.3);
+}
+
+.password-box button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.password-box button:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.note-date {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    cursor: text;
+}
+
+.note-date:focus {
+    background-color: rgba(255, 255, 255, 0.9);
+    outline: 2px solid var(--primary-color);
+    box-shadow: 0 0 5px rgba(255, 64, 129, 0.3);
+}
+
+/* 吐槽墙样式 */
+.wall-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.wall-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.wall-header h2 {
+    color: var(--primary-color);
+}
+
+.add-note-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.add-note-btn:hover {
+    background-color: #f50057;
+    transform: scale(1.05);
+}
+
+#wall-notes {
+    position: relative;
+    min-height: 500px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#wall-notes .note-window {
+    position: absolute;
+    margin: 0;
+}
+
+.note-window {
+    position: fixed;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    z-index: 1000;
+}
+
+.note-window-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+    cursor: move;
+}
+
+.note-title {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    width: 150px;
+}
+
+.note-title:focus {
+    background: #fff;
+    border-radius: 4px;
+    padding: 2px 5px;
+}
+
+.note-window-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.note-window-actions button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.note-window-actions button:hover {
+    color: #ffebee;
+}
+
+.note-window-content {
+    padding: 15px;
+}
+
+.note-window-content textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    resize: none;
+    outline: none;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.note-window-content textarea:focus {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.note-window-content p {
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.note-window-content small {
+    color: #666;
+    font-size: 12px;
+}
+
+.wall-note {
+    position: absolute;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    padding: 15px;
+    margin: 10px;
+}
+
+.wall-note .note-content {
+    margin-bottom: 10px;
+}
+
+.wall-note .note-content p {
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.wall-note .note-content small {
+    color: #666;
+    font-size: 12px;
+}
+
+.wall-note .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.wall-note .delete-btn:hover {
+    color: var(--primary-color);
+}
+
+.nav-button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-button:hover {
+    background-color: #e0e0e0;
+}
+
+.nav-button.active,
+.nav-button[style*="background-color: #ff69b4"] {
+    background-color: #ff69b4 !important;
+    color: white !important;
+} 

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hpf&zjl - 笔记</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material-Icons" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <h2>请输入密码</h2>
+            <input type="password" id="passwordInput" placeholder="请输入密码...">
+            <button onclick="checkPassword()">确认</button>
+        </div>
+    </div>
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>hpf&zjl</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="material-icons">✖</i>首页</a></li>
+                <li><a href="notes.html" class="active"><i class="material-icons">✖</i>笔记</a></li>
+                <li><a href="wall.html"><i class="material-icons">chat</i>吐槽墙</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="upload-button">
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                <button onclick="document.getElementById('photoInput').click()">
+                    <i class="material-icons">➕</i>
+                </button>
+            </div>
+            <div id="uploadStatus"></div>
+            <div id="notesList" class="notes-list"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
