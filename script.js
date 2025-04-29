@@ -15,6 +15,9 @@ function checkPassword() {
         isPasswordVerified = true;
         document.getElementById('passwordOverlay').style.display = 'none';
         document.getElementById('mainContent').style.display = 'flex';
+        document.querySelector('.main-content').style.display = 'block';
+        // 确保内容可见
+        document.getElementById('notesList').style.display = 'grid';
     } else {
         alert('密码错误，请重试！');
         document.getElementById('passwordInput').value = '';
@@ -302,15 +305,19 @@ function loadNotes() {
 }
 
 // 页面加载时初始化
-document.addEventListener('DOMContentLoaded', () => {
-    if (checkEntryPoint() && !isPasswordVerified) {
-        document.getElementById('passwordOverlay').style.display = 'flex';
-        document.getElementById('mainContent').style.display = 'none';
-    } else {
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查是否已经验证过密码
+    if (isPasswordVerified) {
         document.getElementById('passwordOverlay').style.display = 'none';
         document.getElementById('mainContent').style.display = 'flex';
+        document.querySelector('.main-content').style.display = 'block';
+    } else {
+        // 如果没有验证过密码，显示密码输入界面
+        document.getElementById('passwordOverlay').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'none';
     }
     
-    // 加载笔记
+    // 加载已保存的笔记
     loadNotes();
+    displayNotes();
 }); 
