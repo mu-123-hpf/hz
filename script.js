@@ -92,38 +92,48 @@ function handleFileUpload(file) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const note = {
-            id: Date.now(),
-            url: e.target.result,
-            content: '点击此处添加描述...',
-            date: new Date().toLocaleString(),
-            type: 'photo'
-        };
-        
-        notes.push(note);
-        saveNotes();
-        displayNotes();
-        
-        // 显示上传成功提示
-        statusDiv.textContent = '上传成功！';
-        statusDiv.style.color = 'green';
-        statusDiv.style.opacity = '1';
-        
-        // 3秒后淡出
-        setTimeout(() => {
-            statusDiv.style.transition = 'opacity 1s ease';
-            statusDiv.style.opacity = '0';
-        }, 3000);
-    };
-    
-    reader.onerror = function() {
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    fetch('upload.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const note = {
+                id: Date.now(),
+                url: data.url,
+                content: '点击此处添加描述...',
+                date: new Date().toLocaleString(),
+                type: 'photo'
+            };
+            
+            notes.push(note);
+            saveNotes();
+            displayNotes();
+            
+            // 显示上传成功提示
+            statusDiv.textContent = '上传成功！';
+            statusDiv.style.color = 'green';
+            statusDiv.style.opacity = '1';
+            
+            // 3秒后淡出
+            setTimeout(() => {
+                statusDiv.style.transition = 'opacity 1s ease';
+                statusDiv.style.opacity = '0';
+            }, 3000);
+        } else {
+            statusDiv.textContent = data.message || '上传失败，请重试！';
+            statusDiv.style.color = 'red';
+        }
+    })
+    .catch(error => {
         statusDiv.textContent = '上传失败，请重试！';
         statusDiv.style.color = 'red';
-    };
-    
-    reader.readAsDataURL(file);
+        console.error('上传错误:', error);
+    });
 }
 
 // 设置拖拽上传
@@ -206,6 +216,29 @@ function saveEdit(id, element, field) {
 
 // 删除笔记或照片
 function deleteNote(id) {
+    const note = notes.find(n => n.id === id);
+    if (note && note.type === 'photo') {
+        // 发送请求删除服务器上的图片
+        fetch('delete.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                filePath: note.url
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                console.error('删除图片失败:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('删除图片错误:', error);
+        });
+    }
+    
     notes = notes.filter(note => note.id !== id);
     saveNotes();
     displayNotes();
@@ -221,6 +254,49 @@ function loadNotes() {
     const savedNotes = localStorage.getItem('notes');
     if (savedNotes) {
         notes = JSON.parse(savedNotes);
+        
+        // 检查并转换 base64 图片
+        notes.forEach(note => {
+            if (note.type === 'photo' && note.url.startsWith('data:image')) {
+                // 从 base64 中提取图片数据
+                const base64Data = note.url.split(',')[1];
+                const imageData = atob(base64Data);
+                const arrayBuffer = new ArrayBuffer(imageData.length);
+                const uint8Array = new Uint8Array(arrayBuffer);
+                
+                for (let i = 0; i < imageData.length; i++) {
+                    uint8Array[i] = imageData.charCodeAt(i);
+                }
+                
+                // 创建 Blob 对象
+                const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+                const file = new File([blob], `converted_${note.id}.jpg`, { type: 'image/jpeg' });
+                
+                // 上传转换后的图片
+                const formData = new FormData();
+                formData.append('photo', file);
+                
+                fetch('upload.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 更新笔记中的图片URL
+                        note.url = data.url;
+                        saveNotes();
+                        displayNotes();
+                    } else {
+                        console.error('转换图片失败:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('转换图片错误:', error);
+                });
+            }
+        });
+        
         displayNotes();
     }
 }
