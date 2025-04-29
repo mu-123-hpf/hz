@@ -214,32 +214,53 @@ function saveEdit(id, element, field) {
     } else if (field === 'date') {
         note.date = newContent;
     }
+    
+    // 保存到服务器
+    fetch('save_note.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(note)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            console.error('保存笔记失败:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('保存笔记错误:', error);
+    });
+    
     saveNotes();
 }
 
 // 删除笔记或照片
 function deleteNote(id) {
     const note = notes.find(n => n.id === id);
-    if (note && note.type === 'photo') {
-        // 发送请求删除服务器上的图片
-        fetch('delete.php', {
+    if (note) {
+        // 删除服务器上的笔记文件
+        fetch('delete_note.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                filePath: note.url
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                console.error('删除图片失败:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('删除图片错误:', error);
+            body: JSON.stringify({ id: id })
         });
+        
+        if (note.type === 'photo') {
+            // 发送请求删除服务器上的图片
+            fetch('delete.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    filePath: note.url
+                })
+            });
+        }
     }
     
     notes = notes.filter(note => note.id !== id);
@@ -288,6 +309,14 @@ function loadNotes() {
                     if (data.success) {
                         // 更新笔记中的图片URL
                         note.url = data.url;
+                        // 保存更新后的笔记到服务器
+                        fetch('save_note.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(note)
+                        });
                         saveNotes();
                         displayNotes();
                     } else {
