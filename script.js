@@ -179,17 +179,9 @@ function displayNotes() {
         const noteElement = document.createElement('div');
         noteElement.className = 'note-item';
         
-        // 添加图片加载错误处理
-        const imgElement = document.createElement('img');
-        imgElement.src = note.url;
-        imgElement.alt = "上传的照片";
-        imgElement.onerror = function() {
-            console.error('图片加载失败:', note.url);
-            this.src = 'error.png'; // 可以设置一个默认的错误图片
-        };
-        
         noteElement.innerHTML = `
             <button class="delete-btn" onclick="deleteNote(${note.id})">删除</button>
+            <img src="${note.url}" alt="上传的照片">
             <div class="note-content">
                 <p class="note-text" contenteditable="true" 
                    data-placeholder="点击此处添加描述..." 
@@ -199,10 +191,7 @@ function displayNotes() {
                        onblur="saveEdit(${note.id}, this, 'date')">${note.date}</small>
             </div>
         `;
-        
-        // 将图片元素插入到正确的位置
-        noteElement.insertBefore(imgElement, noteElement.firstChild.nextSibling);
-        
+
         notesList.appendChild(noteElement);
     });
 }
@@ -268,13 +257,10 @@ function loadNotes() {
     const savedNotes = localStorage.getItem('notes');
     if (savedNotes) {
         notes = JSON.parse(savedNotes);
-        console.log('加载的笔记:', notes);
         
         // 检查并转换 base64 图片
         notes.forEach(note => {
             if (note.type === 'photo' && note.url.startsWith('data:image')) {
-                console.log('发现 base64 图片，准备转换:', note.id);
-                
                 // 从 base64 中提取图片数据
                 const base64Data = note.url.split(',')[1];
                 const imageData = atob(base64Data);
@@ -300,7 +286,6 @@ function loadNotes() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        console.log('图片转换成功:', data.url);
                         // 更新笔记中的图片URL
                         note.url = data.url;
                         saveNotes();
@@ -312,8 +297,6 @@ function loadNotes() {
                 .catch(error => {
                     console.error('转换图片错误:', error);
                 });
-            } else {
-                console.log('图片路径:', note.url);
             }
         });
         
