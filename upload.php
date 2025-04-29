@@ -47,9 +47,23 @@ if ($_FILES['photo']) {
     }
     
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+        // 获取当前页面的完整URL
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        $baseUrl = $protocol . $host;
+        
+        // 获取当前脚本的目录路径
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+        if ($scriptDir === '/') {
+            $scriptDir = '';
+        }
+        
+        // 构建完整的图片URL
+        $imageUrl = $baseUrl . $scriptDir . '/' . $targetPath;
+        
         echo json_encode([
             'success' => true,
-            'url' => $targetPath
+            'url' => $imageUrl
         ]);
     } else {
         echo json_encode([

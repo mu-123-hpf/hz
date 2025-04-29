@@ -179,9 +179,24 @@ function displayNotes() {
         const noteElement = document.createElement('div');
         noteElement.className = 'note-item';
         
+        // 创建图片元素
+        const imgElement = document.createElement('img');
+        imgElement.src = note.url;
+        imgElement.alt = "上传的照片";
+        
+        // 添加图片加载错误处理
+        imgElement.onerror = function() {
+            console.error('图片加载失败:', note.url);
+            // 尝试使用相对路径
+            if (note.url.startsWith('http')) {
+                const urlParts = note.url.split('/');
+                const fileName = urlParts[urlParts.length - 1];
+                this.src = 'photo/' + fileName;
+            }
+        };
+        
         noteElement.innerHTML = `
             <button class="delete-btn" onclick="deleteNote(${note.id})">删除</button>
-            <img src="${note.url}" alt="上传的照片">
             <div class="note-content">
                 <p class="note-text" contenteditable="true" 
                    data-placeholder="点击此处添加描述..." 
@@ -191,7 +206,10 @@ function displayNotes() {
                        onblur="saveEdit(${note.id}, this, 'date')">${note.date}</small>
             </div>
         `;
-
+        
+        // 将图片元素插入到正确的位置
+        noteElement.insertBefore(imgElement, noteElement.firstChild.nextSibling);
+        
         notesList.appendChild(noteElement);
     });
 }
