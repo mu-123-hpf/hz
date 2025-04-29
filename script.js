@@ -309,14 +309,6 @@ function loadNotes() {
                     if (data.success) {
                         // 更新笔记中的图片URL
                         note.url = data.url;
-                        // 保存更新后的笔记到服务器
-                        fetch('save_note.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(note)
-                        });
                         saveNotes();
                         displayNotes();
                     } else {
