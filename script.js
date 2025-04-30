@@ -272,54 +272,9 @@ function saveNotes() {
 
 // 从本地存储加载笔记
 function loadNotes() {
-    const savedNotes = localStorage.getItem('notes');
-    if (savedNotes) {
-        notes = JSON.parse(savedNotes);
-        
-        // 检查并转换 base64 图片
-        notes.forEach(note => {
-            if (note.type === 'photo' && note.url.startsWith('data:image')) {
-                // 从 base64 中提取图片数据
-                const base64Data = note.url.split(',')[1];
-                const imageData = atob(base64Data);
-                const arrayBuffer = new ArrayBuffer(imageData.length);
-                const uint8Array = new Uint8Array(arrayBuffer);
-                
-                for (let i = 0; i < imageData.length; i++) {
-                    uint8Array[i] = imageData.charCodeAt(i);
-                }
-                
-                // 创建 Blob 对象
-                const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
-                const file = new File([blob], `converted_${note.id}.jpg`, { type: 'image/jpeg' });
-                
-                // 上传转换后的图片
-                const formData = new FormData();
-                formData.append('photo', file);
-                
-                fetch('upload.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // 更新笔记中的图片URL
-                        note.url = data.url;
-                        saveNotes();
-                        displayNotes();
-                    } else {
-                        console.error('转换图片失败:', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('转换图片错误:', error);
-                });
-            }
-        });
-        
-        displayNotes();
-    }
+    // 直接加载笔记，不需要密码验证
+    const notes = JSON.parse(localStorage.getItem('notes')) || [];
+    displayNotes(notes);
 }
 
 // 页面加载时初始化
@@ -338,4 +293,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // 加载已保存的笔记
     loadNotes();
     displayNotes();
-}); 
+});
+
+// 修改其他相关函数，移除密码验证检查
+function addNote() {
+    const noteInput = document.getElementById('noteInput');
+    const noteText = noteInput.value.trim();
+    if (noteText) {
+        const notes = JSON.parse(localStorage.getItem('notes')) || [];
+        notes.push({
+            text: noteText,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('notes', JSON.stringify(notes));
+        noteInput.value = '';
+        displayNotes(notes);
+    }
+} 
